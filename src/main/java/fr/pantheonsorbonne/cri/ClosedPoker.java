@@ -1,4 +1,8 @@
 package fr.pantheonsorbonne.cri;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ClosedPoker {
 
     public static void main(String... args) {
@@ -24,14 +28,49 @@ public class ClosedPoker {
         p3.addCard(Deck.getRandomCards(cardsP3.length));
 
         // vérifier qui gagne
+
+        List<Player> players = new ArrayList<>();
+
         if (p1.beats(p2) && p1.beats(p3)) {
-            System.out.println(p1.name+" wins with hand \n" + p1.getHandString());
+            players.add(p1);
+            if (p2.beats(p3)) {
+                players.add(p2);
+                players.add(p3);
+            } else {
+                players.add(p3);
+                players.add(p2);
+            }
+
         } else if (p2.beats(p1) && p2.beats(p3)) {
-            System.out.println(p2.name+" wins with hand \n" + p2.getHandString());
+            players.add(p2);
+            if (p1.beats(p3)) {
+                players.add(p1);
+                players.add(p3);
+            } else {
+                players.add(p3);
+                players.add(p1);
+            }
+
         } else if (p3.beats(p1) && p3.beats(p2)) {
-            System.out.println(p3.name+" wins with hand \n" + p3.getHandString());
-        } else {
-            System.out.println("There is a draw.");
+            players.add(p3);
+            if (p1.beats(p2)) {
+                players.add(p1);
+                players.add(p2);
+            } else {
+                players.add(p2);
+                players.add(p1);
+            }
+        }
+
+        System.out.println("");
+        System.out.println(players.get(0).name + " WINS WITH HAND \n" + players.get(0).getHandString());
+
+        System.out.println("");
+        System.out.println("\nClassement des joueurs :");
+        for (Player player : players) {
+            MainPoker H = HandResult.determinerMain(player.getCards());
+            System.out.println(player.name + " with hand (force "+H.getForce()+" => "+H.getName()+"): \n" +player.getHandString());
         }
     }
+
 }

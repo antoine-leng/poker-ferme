@@ -25,21 +25,50 @@ public class Player {
         return this.cards;
     }
 
-    // méthode pour vérifier si un joueur bat un autre joueur
-    public boolean beats(Player other) {
-        HandResult mine = new HandResult(this.cards);
-        HandResult his = new HandResult(other.cards);
+    public boolean compareHighCards(Player other) {
 
-        if (mine.getNumRepetition() > his.getNumRepetition()) {
-            return true;
-        } else if (mine.getNumRepetition() == his.getNumRepetition()) {
-            if (mine.getHighCard().ordinal() < his.getHighCard().ordinal()) {
-                return true;
+
+        int[] myValues = new int[this.cards.length];
+        for (int i = 0; i < this.cards.length; i++) {
+            myValues[i] = this.cards[i].getValue().ordinal();
+        }
+        java.util.Arrays.sort(myValues);
+
+    
+        int[] otherValues = new int[other.cards.length];
+        for (int i = 0; i < other.cards.length; i++) {
+            otherValues[i] = other.cards[i].getValue().ordinal();
+        }
+        java.util.Arrays.sort(otherValues);
+    
+
+
+        for (int i = 0; i <myValues.length ; i++) {
+            if (myValues[i] > otherValues[i]) {
+                return true;  
+            } else if (myValues[i] < otherValues[i]) {
+                return false; 
             }
         }
 
         return false;
 
+    }
+
+
+    
+    // méthode pour vérifier si un joueur bat un autre joueur
+    public boolean beats(Player other) {
+        MainPoker myHand = HandResult.determinerMain(this.cards);
+        MainPoker otherHand = HandResult.determinerMain(other.cards);
+        
+        if (myHand.getForce() > otherHand.getForce()) {
+            return true;
+        } else if (myHand.getForce() == otherHand.getForce()) {
+            // Si les combinaisons sont les mêmes, on compare les cartes
+            return this.compareHighCards(other);
+        }
+        return false;
     }
 
     // méthode pour afficher la main du joueur en chaîne de caractères
